@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
+using System;
 using System.Linq;
 using TMPro;
 using UnityEditor;
@@ -10,6 +10,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 using Random = System.Random;
+using System.IO;
 
 public class ToolGridEditor : MonoBehaviour
 {
@@ -128,11 +129,31 @@ public class ToolGridEditor : MonoBehaviour
     public void ExportBtnClick()
     {
         var time = DateTime.Now.ToString("dd_MM_yyyy (HH:mm:ss)");
-        string filePath = "Assets/Data/arrayData" + time + ".txt";
+        string filePath = "Assets/Data/arrayData" + time + ".txt";  
 
         SaveArrayToFile(filePath, grid);
 
         Debug.Log("Dữ liệu đã được lưu vào tệp văn bản.");
+    }
+    void SaveArrayToFile(string filePath, int[,] arrayToSave)
+    {
+        using (StreamWriter writer = new StreamWriter(filePath))
+        {
+            for (int i = 0; i < arrayToSave.GetLength(0); i++)
+            {
+                for (int j = 0; j < arrayToSave.GetLength(1); j++)
+                {
+                    writer.Write(arrayToSave[i, j]);
+
+                    if (j < arrayToSave.GetLength(1) - 1)
+                    {
+                        writer.Write(",");
+                    }
+                }
+
+                writer.WriteLine();
+            }
+        }
     }
 
     // Input: Click on Import, "filePath"
@@ -821,26 +842,7 @@ public class ToolGridEditor : MonoBehaviour
 
     // Input: đường dẫn tới thư mục được sẽ lưu file txt, grid
     // Output: Chuyển đổi grid thành file txt và lưu vào folder ScreenCapture
-    void SaveArrayToFile(string filePath, int[,] arrayToSave)
-    {
-        using (StreamWriter writer = new StreamWriter(filePath))
-        {
-            for (int i = 0; i < arrayToSave.GetLength(0); i++)
-            {
-                for (int j = 0; j < arrayToSave.GetLength(1); j++)
-                {
-                    writer.Write(arrayToSave[i, j]);
-
-                    if (j < arrayToSave.GetLength(1) - 1)
-                    {
-                        writer.Write(",");
-                    }
-                }
-
-                writer.WriteLine();
-            }
-        }
-    }
+   
 
     // Input: Đường dẫn file text
     // Output: Đọc file text, load các giá trị vào mảng 2 chiều gird
